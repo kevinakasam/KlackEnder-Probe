@@ -275,5 +275,126 @@ gcode:
   ```
 
 ### Marlin
+The installation for Marlin requires some more changes, but I will guide you through this :). These changes are only to get the KlackEnder working correctly. You still need to configure the rest of the options as appropriate for your printer. Support for the KlackEnder and similar probes was only recently added so a current version of Marlin needs to be used. Go to ```https://marlinfw.org/meta/download/``` and download the ```2.1.x.zip```. Follow the instructions for downloading, Installing, and configuring VSCode. Before compiling with PlatformIO you will need to setup your config files. Go to ```https://github.com/MarlinFirmware/Configurations/tree/bugfix-2.1.x/config/examples/Creality``` find your Printer/board setup and down load the appropriate Configuration.h & Configuration_adv.h. At this point you will want to go through and make the changes below, once completed you should be good to compile and use your printer. We are working on getting Configuration files posted for common printer combinations as well as .bins uploaded with pre-compiled firmeware for common setups.
 
-A kind user (Farva) on my [Discord](https://discord.gg/xqpKrxt9FC) figured out how to configure Marlin for the Rev2. I had no time to test it yet. Feel free to join my server and test it out on your own. Once I tested it, I will upload detailed instruction here. 
+Marlin will now include a probe deploy and stow option under the motion menu when the Mag_mounted probe is defined.
+
+#### 1. Configuration.h
+- Search for ``` #define Z_MIN_PROBE_USES_Z_MIN_ENDSTOP_PIN``` (line 1244) comment out by adding ```//``` before ```#define```
+
+- Search for ```//#define USE_PROBE_FOR_Z_HOMING``` and uncomment by remvoving ```//``` before ```#define```
+
+- Search for ``` //#define MAG_MOUNTED_PROBE``` (line 1349) uncomment by removing the ```//```
+  and change lines 1354-1363 to 
+  ```
+  #define MAG_MOUNTED_DEPLOY_1 { PROBE_DEPLOY_FEEDRATE, { 245, 114, 20 } }  // Move to side Dock / Attach probe
+  #define MAG_MOUNTED_DEPLOY_2 { PROBE_DEPLOY_FEEDRATE, { 200, 114, 020} }  // Move probe off dock
+  //#define MAG_MOUNTED_DEPLOY_3 { PROBE_DEPLOY_FEEDRATE, { 245, 114, 20 } }  // lift probe up
+  //#define MAG_MOUNTED_DEPLOY_4 { PROBE_DEPLOY_FEEDRATE, {   0,   0,  0 } }  // Extra move if needed
+  //#define MAG_MOUNTED_DEPLOY_5 { PROBE_DEPLOY_FEEDRATE, {   0,   0,  0 } }  // Extra move if needed
+  #define MAG_MOUNTED_STOW_1   { PROBE_STOW_FEEDRATE,   { 245, 114, 20 } }  // Move to dock
+  #define MAG_MOUNTED_STOW_2   { PROBE_STOW_FEEDRATE,   { 245, 114,  0 } }  // Place probe beside remover
+  #define MAG_MOUNTED_STOW_3   { PROBE_STOW_FEEDRATE,   { 240, 114,  0 } }  // Side move to remove probe
+  #define MAG_MOUNTED_STOW_4   { PROBE_STOW_FEEDRATE,   { 240, 114, 20 } }  // Ensure probe is off
+  //#define MAG_MOUNTED_STOW_5   { PROBE_STOW_FEEDRATE,   {   0,   0,  0 } }  // Extra move if needed
+  ```
+  Probe deploy and stow feedrate can be changed by edditing line's 1351-1352
+
+
+- Search for ```NOZZLE_TO_PROBE_OFFSET``` (line 1453) and change
+  ```
+  #define NOZZLE_TO_PROBE_OFFSET { 10, 10, 0 }
+
+  // Most probes should stay away from the edges of the bed, but
+  // with NOZZLE_AS_PROBE this can be negative for a wider probing area.
+  #define PROBING_MARGIN 10
+  ```
+
+  to 
+
+  ```
+  #define NOZZLE_TO_PROBE_OFFSET { 8, 21, 1.2 }   --> set correct offset
+
+  // Most probes should stay away from the edges of the bed, but
+  // with NOZZLE_AS_PROBE this can be negative for a wider probing area.
+  #define PROBING_MARGIN 15   --> more clearance to the sides of the bed.
+  ```
+  
+- Search for ```// @section machine``` (line 1661) and change
+  ```
+  // The size of the printable area
+  #define X_BED_SIZE 200
+  #define Y_BED_SIZE 200
+
+  // Travel limits (mm) after homing, corresponding to endstop positions.
+  #define X_MIN_POS 0
+  #define Y_MIN_POS 0
+  #define Z_MIN_POS 0
+  #define X_MAX_POS X_BED_SIZE
+  #define Y_MAX_POS Y_BED_SIZE
+  #define Z_MAX_POS 200
+  ```
+
+  to 
+
+  ```
+  // The size of the printable area
+  #define X_BED_SIZE 230    --> adjust bed size
+  #define Y_BED_SIZE 235    --> adjust bed size
+
+  // Travel limits (mm) after homing, corresponding to endstop positions.
+  #define X_MIN_POS 0
+  #define Y_MIN_POS -8      --> adjust endstop position
+  #define Z_MIN_POS 0
+  #define X_MAX_POS +15     --> adjust x travel
+  #define Y_MAX_POS Y_BED_SIZE
+  #define Z_MAX_POS 250     --> adjust z travel
+  ```
+  
+- Search for ```// @section calibrate``` (line 1806) and change
+  ```
+  //#define AUTO_BED_LEVELING_3POINT
+  //#define AUTO_BED_LEVELING_LINEAR
+  //#define AUTO_BED_LEVELING_BILINEAR
+  //#define AUTO_BED_LEVELING_UBL
+  //#define MESH_BED_LEVELING
+
+  /**
+  * Normally G28 leaves leveling disabled on completion. Enable one of
+  * these options to restore the prior leveling state or to always enable
+  * leveling immediately after G28.
+  */
+  //#define RESTORE_LEVELING_AFTER_G28
+  //#define ENABLE_LEVELING_AFTER_G28
+  ```
+
+  to 
+
+  ```
+  //#define AUTO_BED_LEVELING_3POINT
+  //#define AUTO_BED_LEVELING_LINEAR
+  //#define AUTO_BED_LEVELING_BILINEAR
+  #define AUTO_BED_LEVELING_UBL     --> Remove //
+  //#define MESH_BED_LEVELING
+
+  /**
+  * Normally G28 leaves leveling disabled on completion. Enable one of
+  * these options to restore the prior leveling state or to always enable
+  * leveling immediately after G28.
+  */
+  #define RESTORE_LEVELING_AFTER_G28    --> Remove //
+  //#define ENABLE_LEVELING_AFTER_G28
+  ```
+  
+- Search for ```Unified Bed Leveling``` line(1937)
+  Change line 1942 from ```#define MESH_INSET 1```
+  to ```#define MESH_INSET 10```
+  
+  Change line 1943 from ```#define GRID_MAX_POINTS_X 10```  
+  to ```#define GRID_MAX_POINTS_X 15```  
+  Uncomment line 1954 by removing the ```//``` before ```#define UBL_MESH_WIZARD```  
+  Uncomment line 1974 ```//#define LCD_BED_LEVELING```  
+  Uncomment Line 1983 ```//#define LCD_BED_TRAMMING```  
+  Uncomment Line 1990 ```//#define BED_TRAMMING_USE_PROBE```  
+  Uncomment Line 2048 ```//#define Z_SAFE_HOMING```
+  Uncomment Line 2138 ```//#define EEPROM_INIT_NOW   // Init EEPROM on first boot after a new build```  

@@ -231,141 +231,32 @@ The ```[gcode_macro G29]``` does the same like the ```[gcode_macro AUTO_BED_MESH
   ```
 
 ### Marlin
-The installation for Marlin requires some more changes, but I will guide you through this :)  There is also a zipped Marlin file. This is exactly the same configuration I used for testing. It contains the Probe related thins only!! Do not flash this to your printer!!
+### Marlin
+The installation for Marlin requires some more changes, but I will guide you through this :). These changes are only to get the KlackEnder working correctly. You still need to configure the rest of the options as appropriate for your printer. Support for the KlackEnder and similar probes was only recently added so a current version of Marlin needs to be used. Go to ```https://marlinfw.org/meta/download/``` and download the ```2.1.x.zip```. Follow the instructions for downloading, Installing, and configuring VSCode. Before compiling with PlatformIO you will need to setup your config files. Go to ```https://github.com/MarlinFirmware/Configurations/tree/bugfix-2.1.x/config/examples/Creality``` find your Printer/board setup and down load the appropriate Configuration.h & Configuration_adv.h. At this point you will want to go through and make the changes below, once completed you should be good to compile and use your printer. We are working on getting Configuration files posted for common printer combinations as well as .bins uploaded.
+
+Marlin will now include a probe deploy and stow option under the motion menu when the Mag_mounted probe is defined.
 
 #### 1. Configuration.h
+- Search for ``` #define Z_MIN_PROBE_USES_Z_MIN_ENDSTOP_PIN``` (line 1244) comment out by adding ```//``` before ```#define```
 
-- Search for ```// @section homing``` (line 783) and change
+- Search for ``` //#define MAG_MOUNTED_PROBE``` (line 1349) uncomment by removing the ```//```
+  and change lines 1354-1363 to 
   ```
-  #define USE_XMIN_PLUG
-  #define USE_YMIN_PLUG
-  #define USE_ZMIN_PLUG
-  //#define USE_IMIN_PLUG
+  #define MAG_MOUNTED_DEPLOY_1 { PROBE_DEPLOY_FEEDRATE, { 245, 114, 30 } }  // Move to side Dock
+  #define MAG_MOUNTED_DEPLOY_2 { PROBE_DEPLOY_FEEDRATE, { 245, 114, 0 } }  // Move down to probe / Attach probe
+  #define MAG_MOUNTED_DEPLOY_3 { PROBE_DEPLOY_FEEDRATE, { 245, 114, 20 } }  // lift probe up
+  //#define MAG_MOUNTED_DEPLOY_4 { PROBE_DEPLOY_FEEDRATE, {   0,   0,  0 } }  // Extra move if needed
+  //#define MAG_MOUNTED_DEPLOY_5 { PROBE_DEPLOY_FEEDRATE, {   0,   0,  0 } }  // Extra move if needed
+  #define MAG_MOUNTED_STOW_1   { PROBE_STOW_FEEDRATE,   { 245, 114, 20 } }  // Move to dock
+  #define MAG_MOUNTED_STOW_2   { PROBE_STOW_FEEDRATE,   { 245, 114,  0 } }  // Place probe on dock
+  #define MAG_MOUNTED_STOW_3   { PROBE_STOW_FEEDRATE,   { 240, 114,  0 } }  // Side move to remove probe
+  #define MAG_MOUNTED_STOW_4   { PROBE_STOW_FEEDRATE,   { 240, 114, 20 } }  // Side move to remove probe
+  //#define MAG_MOUNTED_STOW_5   { PROBE_STOW_FEEDRATE,   {   0,   0,  0 } }  // Extra move if needed
   ```
+  Probe deploy and stow feedrate can be changed by edditing line's 1351-1352
 
-  to 
 
-  ```
-  #define USE_XMIN_PLUG
-  #define USE_YMIN_PLUG
-  #define USE_ZMIN_PLUG
-  #define USE_Z_MIN_PROBE_PIN     --> Remove // and add USE_Z_MIN_PROBE_PIN
-  ```
-
-- Search for ```// @section probes``` (line 1034) and change
-  ```
-  /**
-  * Enable this option for a probe connected to the Z-MIN pin.
-  * The probe replaces the Z-MIN endstop and is used for Z homing.
-  * (Automatically enables USE_PROBE_FOR_Z_HOMING.)
-  */
-  #define Z_MIN_PROBE_USES_Z_MIN_ENDSTOP_PIN
-  ```
-
-  to 
-
-  ```
-  /**
-  * Enable this option for a probe connected to the Z-MIN pin.
-  * The probe replaces the Z-MIN endstop and is used for Z homing.
-  * (Automatically enables USE_PROBE_FOR_Z_HOMING.)
-  */
-  //#define Z_MIN_PROBE_USES_Z_MIN_ENDSTOP_PIN      --> Add // to comment this out
-  ```
-  
-- Search for ```Z_MIN_PROBE_PIN``` (line 1054) and change
-  ```
-  /**
-  * Z_MIN_PROBE_PIN
-  *
-  * Define this pin if the probe is not connected to Z_MIN_PIN.
-  * If not defined the default pin for the selected MOTHERBOARD
-  * will be used. Most of the time the default is what you want.
-  *
-  *  - The simplest option is to use a free endstop connector.
-  *  - Use 5V for powered (usually inductive) sensors.
-  *
-  *  - RAMPS 1.3/1.4 boards may use the 5V, GND, and Aux4->D32 pin:
-  *    - For simple switches connect...
-  *      - normally-closed switches to GND and D32.
-  *      - normally-open switches to 5V and D32.
-  */
-  //#define Z_MIN_PROBE_PIN 32 // Pin 32 is the RAMPS default
-  ```
-
-  to 
-
-  ```
-  /**
-  * Z_MIN_PROBE_PIN
-  *
-  * Define this pin if the probe is not connected to Z_MIN_PIN.
-  * If not defined the default pin for the selected MOTHERBOARD
-  * will be used. Most of the time the default is what you want.
-  *
-  *  - The simplest option is to use a free endstop connector.
-  *  - Use 5V for powered (usually inductive) sensors.
-  *
-  *  - RAMPS 1.3/1.4 boards may use the 5V, GND, and Aux4->D32 pin:
-  *    - For simple switches connect...
-  *      - normally-closed switches to GND and D32.
-  *      - normally-open switches to 5V and D32.
-  */
-  #define Z_MIN_PROBE_PIN 32 // Pin 32 is the RAMPS default   --> Remove // and add your Probe Pin. See the wiring guide for your pin.
-  ```
-
-- Search for ```Z_PROBE_ALLEN_KEY``` (line 1139) and change
-  ```
-  //
-  // For Z_PROBE_ALLEN_KEY see the Delta example configurations.
-  //
-  ```
-
-  to 
-
-  ```
-  /**
-  * Allen key retractable z-probe as seen on many Kossel delta printers - https://reprap.org/wiki/Kossel#Automatic_bed_leveling_probe
-  * Deploys by touching z-axis belt. Retracts by pushing the probe down. Uses Z_MIN_PIN.
-  * 
-  * NOTE by KevinAkaSam: See line 1194 at https://github.com/MarlinFirmware/Configurations/blob/release-2.0.9.3/config/examples/delta/generic/Configuration.h
-  *        - The Y Position is set to -8 because the Y Endstop position is at -8. If you set your Y min position to 0, change it to 0 here as well.
-  * 
-  */
-  #define Z_PROBE_ALLEN_KEY
-
-  #if ENABLED(Z_PROBE_ALLEN_KEY)
-  // 2 or 3 sets of coordinates for deploying and retracting the spring loaded touch probe on G29,
-  // if servo actuated touch probe is not defined. Uncomment as appropriate for your printer/probe.
-
-    #define Z_PROBE_ALLEN_KEY_DEPLOY_1 { 245, -8, 5 } //Move to side Dock
-    #define Z_PROBE_ALLEN_KEY_DEPLOY_1_FEEDRATE XY_PROBE_FEEDRATE
-
-    #define Z_PROBE_ALLEN_KEY_DEPLOY_2 { 245, -8, 0 } //Move down to probe / Attach probe
-    #define Z_PROBE_ALLEN_KEY_DEPLOY_2_FEEDRATE (XY_PROBE_FEEDRATE)/10
-
-    #define Z_PROBE_ALLEN_KEY_DEPLOY_3 { 245, -8, 20 } //Lift probe up
-    #define Z_PROBE_ALLEN_KEY_DEPLOY_3_FEEDRATE XY_PROBE_FEEDRATE
-
-    #define Z_PROBE_ALLEN_KEY_STOW_1 { 245, -8, 20 } // Move to dock
-    #define Z_PROBE_ALLEN_KEY_STOW_1_FEEDRATE XY_PROBE_FEEDRATE
-
-    #define Z_PROBE_ALLEN_KEY_STOW_2 { 245, -8, 0 } //Place probe into dock
-    #define Z_PROBE_ALLEN_KEY_STOW_2_FEEDRATE (XY_PROBE_FEEDRATE)/10
-
-    #define Z_PROBE_ALLEN_KEY_STOW_3 { 240, -8, 0 } //Small side move
-    #define Z_PROBE_ALLEN_KEY_STOW_3_FEEDRATE XY_PROBE_FEEDRATE
-
-    #define Z_PROBE_ALLEN_KEY_STOW_4 { 240, -8, 5 } //remove probe
-    #define Z_PROBE_ALLEN_KEY_STOW_4_FEEDRATE XY_PROBE_FEEDRATE
-
-    #define Z_PROBE_ALLEN_KEY_STOW_5 { 0, -8, 5 } //Move back to the left
-    #define Z_PROBE_ALLEN_KEY_STOW_5_FEEDRATE XY_PROBE_FEEDRATE
-
-  #endif // Z_PROBE_ALLEN_KEY
-  ```
-
-- Search for ```NOZZLE_TO_PROBE_OFFSET``` (line 1219) and change
+- Search for ```NOZZLE_TO_PROBE_OFFSET``` (line 1453) and change
   ```
   #define NOZZLE_TO_PROBE_OFFSET { 10, 10, 0 }
 
@@ -384,7 +275,7 @@ The installation for Marlin requires some more changes, but I will guide you thr
   #define PROBING_MARGIN 15   --> more clearance to the sides of the bed.
   ```
   
-- Search for ```// @section machine``` (line 1415) and change
+- Search for ```// @section machine``` (line 1661) and change
   ```
   // The size of the printable area
   #define X_BED_SIZE 200
@@ -403,19 +294,19 @@ The installation for Marlin requires some more changes, but I will guide you thr
 
   ```
   // The size of the printable area
-  #define X_BED_SIZE 235    --> adjust bed size
+  #define X_BED_SIZE 230    --> adjust bed size
   #define Y_BED_SIZE 235    --> adjust bed size
 
   // Travel limits (mm) after homing, corresponding to endstop positions.
   #define X_MIN_POS 0
   #define Y_MIN_POS -8      --> adjust endstop position
   #define Z_MIN_POS 0
-  #define X_MAX_POS 250     --> adjust x travel
+  #define X_MAX_POS +15     --> adjust x travel
   #define Y_MAX_POS Y_BED_SIZE
   #define Z_MAX_POS 250     --> adjust z travel
   ```
   
-- Search for ```// @section calibrate``` (line 1548) and change
+- Search for ```// @section calibrate``` (line 1806) and change
   ```
   //#define AUTO_BED_LEVELING_3POINT
   //#define AUTO_BED_LEVELING_LINEAR
@@ -436,9 +327,9 @@ The installation for Marlin requires some more changes, but I will guide you thr
 
   ```
   //#define AUTO_BED_LEVELING_3POINT
-  #define AUTO_BED_LEVELING_LINEAR    --> Remove //
+  //#define AUTO_BED_LEVELING_LINEAR
   //#define AUTO_BED_LEVELING_BILINEAR
-  //#define AUTO_BED_LEVELING_UBL
+  #define AUTO_BED_LEVELING_UBL     --> Remove //
   //#define MESH_BED_LEVELING
 
   /**
@@ -450,53 +341,14 @@ The installation for Marlin requires some more changes, but I will guide you thr
   //#define ENABLE_LEVELING_AFTER_G28
   ```
   
-### 2. Configuration_adv.h
-
-- Search for ```// Custom Menu: Main Menu``` (line 3853) and change
-  ```
-  // Custom Menu: Main Menu
-  //#define CUSTOM_MENU_MAIN
-  #if ENABLED(CUSTOM_MENU_MAIN)
-    //#define CUSTOM_MENU_MAIN_TITLE "Custom Commands"
-    #define CUSTOM_MENU_MAIN_SCRIPT_DONE "M117 User Script Done"
-    #define CUSTOM_MENU_MAIN_SCRIPT_AUDIBLE_FEEDBACK
-    //#define CUSTOM_MENU_MAIN_SCRIPT_RETURN   // Return to status screen after a script
-    #define CUSTOM_MENU_MAIN_ONLY_IDLE         // Only show custom menu when the machine is idle
-
-    #define MAIN_MENU_ITEM_1_DESC "Home & UBL Info"
-    #define MAIN_MENU_ITEM_1_GCODE "G28\nG29 W"
-    //#define MAIN_MENU_ITEM_1_CONFIRM          // Show a confirmation dialog before this action
-
-    #define MAIN_MENU_ITEM_2_DESC "Preheat for " PREHEAT_1_LABEL
-    #define MAIN_MENU_ITEM_2_GCODE "M140 S" STRINGIFY(PREHEAT_1_TEMP_BED) "\nM104 S" STRINGIFY(PREHEAT_1_TEMP_HOTEND)
-    //#define MAIN_MENU_ITEM_2_CONFIRM
-
-    //#define MAIN_MENU_ITEM_3_DESC "Preheat for " PREHEAT_2_LABEL
-    //#define MAIN_MENU_ITEM_3_GCODE "M140 S" STRINGIFY(PREHEAT_2_TEMP_BED) "\nM104 S" STRINGIFY(PREHEAT_2_TEMP_HOTEND)
-    //#define MAIN_MENU_ITEM_3_CONFIRM
-  ```
-
-  to 
-
-  ```
-  // Custom Menu: Main Menu
-  #define CUSTOM_MENU_MAIN    --> Remove //
-  #if ENABLED(CUSTOM_MENU_MAIN)
-    #define CUSTOM_MENU_MAIN_TITLE "KlackEnder Commands"    --> Remove // and add menu title
-    #define CUSTOM_MENU_MAIN_SCRIPT_DONE "M117 User Script Done"
-    #define CUSTOM_MENU_MAIN_SCRIPT_AUDIBLE_FEEDBACK
-    //#define CUSTOM_MENU_MAIN_SCRIPT_RETURN   // Return to status screen after a script
-    #define CUSTOM_MENU_MAIN_ONLY_IDLE         // Only show custom menu when the machine is idle
-
-    #define MAIN_MENU_ITEM_1_DESC "Probe Out"     --> Add macro name
-    #define MAIN_MENU_ITEM_1_GCODE "G90\nG1 Z5\nG1 X245 F20000\nG1 Z0\nG4 P300\nG1 Z20\nG1 X0"    --> add script
-    //#define MAIN_MENU_ITEM_1_CONFIRM          // Show a confirmation dialog before this action
-
-    #define MAIN_MENU_ITEM_2_DESC "Probe In"    --> Add macro name
-    #define MAIN_MENU_ITEM_2_GCODE "G90\nG1 Z20\nG1 X245 F5000\nG1 Z0 \nG4 P300\nG1 X240 F1000\nG1 Z5\nG4 P300\nG1 X0 F5000\nG1 Z0"   --> add script
-    //#define MAIN_MENU_ITEM_2_CONFIRM
-
-    #define MAIN_MENU_ITEM_3_DESC "Auto Bed Mesh"   --> Remove // and add macro name
-    #define MAIN_MENU_ITEM_3_GCODE "G28\nG29\nG1 X0 Y0 F5000\nG1 Z0"    --> Remove // and add script
-    //#define MAIN_MENU_ITEM_3_CONFIRM
-  ```
+- Search for ```Unified Bed Leveling``` line(1937)
+  Change line 1942 from ```#define MESH_INSET 1```
+  to ```#define MESH_INSET 10```
+  
+  Change line 1943 from ```#define GRID_MAX_POINTS_X 10```  
+  to ```#define GRID_MAX_POINTS_X 15```  
+  Uncomment line 1954 by removing the ```//``` before ```#define UBL_MESH_WIZARD```  
+  Uncomment line 1974 ```//#define LCD_BED_LEVELING```  
+  Uncomment Line 1983 ```//#define LCD_BED_TRAMMING```  
+  Uncomment Line 1990 ```//#define BED_TRAMMING_USE_PROBE```  
+  Uncomment Line 2138 ```//#define EEPROM_INIT_NOW   // Init EEPROM on first boot after a new build```  
