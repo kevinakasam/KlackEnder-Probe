@@ -94,7 +94,7 @@ The ```[gcode_macro G29]``` does the same like the ```[gcode_macro AUTO_BED_MESH
 
 [probe]
 pin: ^PC14 #Probe-Stop Connection on Skr Mini Pro V1.2
-z_offset: -2 #Measure per your specific setup
+z_offset: 0 #Measure per your specific setup
 x_offset: 8 # negative = left of the nozzle
 y_offset: 21 # negative = in front of of the nozzle
 speed: 5.0
