@@ -30,7 +30,7 @@ Its working very well for me. If you have any questions feel free to join the [D
 
 ### BOM - Parts you need:
 - 1x OMRON D2F or similar switch
-- 4x Magnet 3x6mm 
+- 4x Magnet 6x3mm 
 - 2x M3x8mm screw (SHCS or BHCS doesn't matter)
 - 3x M5x8mm screw (SHCS or BHCS doesn't matter)
 - 3x M5 t-nut
