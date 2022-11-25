@@ -4,16 +4,10 @@ KlackEnder Probe - **Simple, fast and cheap!**
 
 <table>
   <tr>
-    <td><img src="https://github.com/kevinakasam/KlackEnder-Probe/blob/main/_ignore/Pictures/Klack1.PNG" width="450"> </td>
+    <td><img src="https://github.com/kevinakasam/KlackEnder-Probe/blob/main/_ignore/Pictures/Klack.png" width="450"> </td>
     <td><img src="https://github.com/kevinakasam/KlackEnder-Probe/blob/main/_ignore/Pictures/Klack2.1.PNG" width="450"> </td>
   </tr>
 </table>
-
-Adaptation of the . A Probe for the Ender 3 and comparable Creality printers.
-The probe is compatible with all printers that use a x-plate like the one from the Ender 3. The cost of the probe is <5€, of which the switch is the most expensive part.
-The probe is compatible with **Marlin and Klipper**. Both firmwares work with the G29 command, the docking is done automatically by the printer, it couldn't be easier! Both    firmwares add a KlackEnder menu to the display that can be used to dock and undock the Probe. The Bed-Mesh can be created via the custom menu, via the default formware settings or with G29.
-
-I recommend to use the Rev2!
 
 ### What is this about?
 
@@ -62,8 +56,11 @@ Parametric design means that everything is based on variables / parameters which
 ## Bill of Materials + Instructions
 
 As for my Belt-Mod, you can find all needed Hardware, STLs and instructions on my Website:
-<img alt="Guide" src="https://github.com/kevinakasam/KlackEnder-Probe/blob/main/_ignore/Pictures/Klack2.1.PNG"
 
+<a href="https://kevinakasam.com/klackender/">
+         <img alt="Guide" src="https://github.com/kevinakasam/KlackEnder-Probe/blob/main/_ignore/Pictures/Klack2.1.PNG"
+         width="300" border-radius="20px">
+</a>
 
 ### STL-Files / Tolerances
 <table>
