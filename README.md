@@ -433,7 +433,7 @@ Marlin will now include a probe deploy and stow option under the motion menu whe
   Uncomment line 1974 ```//#define LCD_BED_LEVELING```  
   Uncomment Line 1983 ```//#define LCD_BED_TRAMMING```  
   Uncomment Line 1990 ```//#define BED_TRAMMING_USE_PROBE```  
-  Uncomment Line 2048 ```//#define Z_SAFE_HOMING```
+  Uncomment Line 2048 ```//#define Z_SAFE_HOMING```  
   Uncomment Line 2138 ```//#define EEPROM_INIT_NOW   // Init EEPROM on first boot after a new build```  
   
   
