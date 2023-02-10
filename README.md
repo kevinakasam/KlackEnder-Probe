@@ -423,12 +423,9 @@ Marlin will now include a probe deploy and stow option under the motion menu whe
   //#define ENABLE_LEVELING_AFTER_G28
   ```
  
-- Search for ```Unified Bed Leveling```
-  Change  from ```#define MESH_INSET 1```
-  to ```#define MESH_INSET 10```
- 
-  Change   ```#define GRID_MAX_POINTS_X 10```  
-  to ```#define GRID_MAX_POINTS_X 15```  
+- Search for ```Unified Bed Leveling```  
+  Change  from ```#define MESH_INSET 1``` to ```#define MESH_INSET 10```
+  Change   ```#define GRID_MAX_POINTS_X 10``` to ```#define GRID_MAX_POINTS_X 15```  
   Uncomment line 1954 by removing the ```//``` before ```#define UBL_MESH_WIZARD```  
   Uncomment line 1974 ```//#define LCD_BED_LEVELING```  
   Uncomment Line 1983 ```//#define LCD_BED_TRAMMING```  
