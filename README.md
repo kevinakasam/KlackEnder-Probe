@@ -343,7 +343,7 @@ Marlin will now include a probe deploy and stow option under the motion menu whe
   #define PROBING_MARGIN 15   //--> more clearance to the sides of the bed.
   ```
  
-- Search for ```// @section machine```  and change
+- Search for ```// @section geometry```  and change
   ```
   // The size of the printable area
   #define X_BED_SIZE 200
