@@ -345,7 +345,7 @@ Marlin will now include a probe deploy and stow option under the motion menu whe
   #define PROBING_MARGIN 15   //--> more clearance to the sides of the bed.
   ```
  
-- Search for ```// @section machine```  and change
+- Search for ```// @section geometry```  and change
   ```
   // The size of the printable area
   #define X_BED_SIZE 200
@@ -425,17 +425,14 @@ Marlin will now include a probe deploy and stow option under the motion menu whe
   //#define ENABLE_LEVELING_AFTER_G28
   ```
  
-- Search for ```Unified Bed Leveling```
-  Change  from ```#define MESH_INSET 1```
-  to ```#define MESH_INSET 10```
- 
-  Change   ```#define GRID_MAX_POINTS_X 10```  
-  to ```#define GRID_MAX_POINTS_X 15```  
+- Search for ```Unified Bed Leveling```  
+  Change  from ```#define MESH_INSET 1``` to ```#define MESH_INSET 10```
+  Change   ```#define GRID_MAX_POINTS_X 10``` to ```#define GRID_MAX_POINTS_X 15```  
   Uncomment  by removing the ```//``` before ```#define UBL_MESH_WIZARD```  
   Uncomment  ```//#define LCD_BED_LEVELING```  
   Uncomment  ```//#define LCD_BED_TRAMMING```  
   Uncomment  ```//#define BED_TRAMMING_USE_PROBE```  
-  Uncomment  ```//#define Z_SAFE_HOMING```
+  Uncomment  ```//#define Z_SAFE_HOMING```  
   Uncomment  ```//#define EEPROM_INIT_NOW   // Init EEPROM on first boot after a new build```  
   
   
