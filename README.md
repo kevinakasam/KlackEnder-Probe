@@ -306,8 +306,10 @@ Marlin will now include a probe deploy and stow option under the motion menu whe
 
 - Search for ```//#define USE_PROBE_FOR_Z_HOMING``` and uncomment by removing ```//``` before ```#define```
 - Search for ```#define PROBE_MANUALLY``` and if not commented out with ```//``` comment it out with ```//```
+- If you have plugged your Probe into the Z-Endstop you will need to uncomment ```//#define Z_MIN_PROBE_USES_Z_MIN_ENDSTOP_PIN```
+  If you have plugged your Probe into the probe port on your board you don't need to touch this.
 
-- Search for ``` //#define MAG_MOUNTED_PROBE``` (line 1349) uncomment by removing the ```//```
+- Search for ``` //#define MAG_MOUNTED_PROBE```  uncomment by removing the ```//```
   and change the following lines to
   ```
   #define MAG_MOUNTED_DEPLOY_1 { PROBE_DEPLOY_FEEDRATE, { 245, 114, 20 } }  // Move to side Dock / Attach probe
@@ -426,12 +428,12 @@ Marlin will now include a probe deploy and stow option under the motion menu whe
 - Search for ```Unified Bed Leveling```  
   Change  from ```#define MESH_INSET 1``` to ```#define MESH_INSET 10```
   Change   ```#define GRID_MAX_POINTS_X 10``` to ```#define GRID_MAX_POINTS_X 15```  
-  Uncomment line 1954 by removing the ```//``` before ```#define UBL_MESH_WIZARD```  
-  Uncomment line 1974 ```//#define LCD_BED_LEVELING```  
-  Uncomment Line 1983 ```//#define LCD_BED_TRAMMING```  
-  Uncomment Line 1990 ```//#define BED_TRAMMING_USE_PROBE```  
-  Uncomment Line 2048 ```//#define Z_SAFE_HOMING```  
-  Uncomment Line 2138 ```//#define EEPROM_INIT_NOW   // Init EEPROM on first boot after a new build```  
+  Uncomment  by removing the ```//``` before ```#define UBL_MESH_WIZARD```  
+  Uncomment  ```//#define LCD_BED_LEVELING```  
+  Uncomment  ```//#define LCD_BED_TRAMMING```  
+  Uncomment  ```//#define BED_TRAMMING_USE_PROBE```  
+  Uncomment  ```//#define Z_SAFE_HOMING```  
+  Uncomment  ```//#define EEPROM_INIT_NOW   // Init EEPROM on first boot after a new build```  
   
   
   ## Marlin Setup Before printing
