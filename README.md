@@ -319,8 +319,8 @@ Marlin will now include a probe deploy and stow option under the motion menu whe
   //#define MAG_MOUNTED_DEPLOY_5 { PROBE_DEPLOY_FEEDRATE, {   0,   0,  0 } }  // Extra move if needed
   #define MAG_MOUNTED_STOW_1   { PROBE_STOW_FEEDRATE,   { 245, 114, 20 } }  // Move to dock
   #define MAG_MOUNTED_STOW_2   { PROBE_STOW_FEEDRATE,   { 245, 114,  0 } }  // Place probe beside remover
-  #define MAG_MOUNTED_STOW_3   { PROBE_STOW_FEEDRATE,   { 240, 114,  0 } }  // Side move to remove probe
-  #define MAG_MOUNTED_STOW_4   { PROBE_STOW_FEEDRATE,   { 240, 114, 20 } }  // Ensure probe is off
+  #define MAG_MOUNTED_STOW_3   { PROBE_STOW_FEEDRATE,   { 220, 114,  0 } }  // Side move to remove probe
+  #define MAG_MOUNTED_STOW_4   { PROBE_STOW_FEEDRATE,   { 220, 114, 20 } }  // Ensure probe is off
   //#define MAG_MOUNTED_STOW_5   { PROBE_STOW_FEEDRATE,   {   0,   0,  0 } }  // Extra move if needed
   ```
   Probe deploy and stow feed rate can be changed by editing the appropriate lines
@@ -436,6 +436,10 @@ Marlin will now include a probe deploy and stow option under the motion menu whe
   Uncomment  ```//#define EEPROM_INIT_NOW   // Init EEPROM on first boot after a new build```  
   
   
+ - In Configuration_adv.H
+  Uncomment ```//#define PROBE_OFFSET_WIZARD```
+  
+  
   ## Marlin Setup Before printing
   Go into the menu->Motion->Unified Bed Leveling->UBL Custom Bed Mesh
   set your normal bed temp and hotend temp and then select custom mesh. This will probe all points that can be reached by the probe and then interpolate the rest.
@@ -446,6 +450,7 @@ Marlin will now include a probe deploy and stow option under the motion menu whe
   after that line add in the following two lines
   ```
   G29 L0 ; load mesh saved in slot 0 which is the default slot
+  G29 A ; activate bed mesh leveling.
   G29 J ; Probe 3 points and tilt the mesh loaded in slot 0 to match the current bed tilt
   ```
 
