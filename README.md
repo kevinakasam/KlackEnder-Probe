@@ -96,6 +96,12 @@ endstop_pin: probe:z_virtual_endstop #if you want to use the Prove as z-endstop 
 #position_endstop: 0 #remove this or uncomment it with a #
 position_min: -8 # set a negative value (minimum as the probe z_offset)
 
+
+[stepper_x]
+position_max: 250 #Your printhead have to move all the way to the right to pickup the probe. If your screw collides with the metal plate, simply flip it around.
+
+
+##Following does not apply for the E3-V2##
 [stepper_y]
 position_min: -8 #most Ender 3 configs have this wrong. Between the nozzle and the bed is a gap of 8mm (Y dimension) when the printer is homed. If not adapt this and the -8 in the Probe_In Makro). 
 position_endstop: -8
@@ -265,7 +271,7 @@ gcode:
 
 
 #####################################################################
-# KlackEnder- Menu
+# KlackEnder- Menu - Only if you have a display installed!
 #####################################################################
 
 [menu __main]
