@@ -260,12 +260,11 @@ gcode:
   AUTO_BED_MESH
 ```
 
-
 ## Useful Links:
 
-https://www.thingiverse.com/kevinakasam/designs
-https://www.thingiverse.com/thing:5778174
-https://kevinakasam.com/klackender/ (You can click on the images for further instructions)
-https://github.com/kevinakasam/KlackEnder-Probe
-https://github.com/TRex22/3d-models/tree/main/klipper_printer_configs
-Kevinakasam's Discord Server: https://discord.gg/xqpKrxt9FC
+- https://www.thingiverse.com/kevinakasam/designs
+- https://www.thingiverse.com/thing:5778174
+- https://kevinakasam.com/klackender/ (You can click on the images for further instructions)
+- https://github.com/kevinakasam/KlackEnder-Probe
+- https://github.com/TRex22/3d-models/tree/main/klipper_printer_configs
+- Kevinakasam's Discord Server: https://discord.gg/xqpKrxt9FC
