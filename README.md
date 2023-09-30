@@ -43,6 +43,16 @@ If you have any questions feel free to join the [Discord-Server](https://discord
          width=250" >
 </a>
 
+<br>
+
+### ❤️ Support my work
+
+All my work is 100% Open-Source and free for everyone to use. But designing and developing all these mods takes a lot of time and effort, so if you appreciate my work and would like to support it and also help cover the costs of gettings the mods perfect, you can use one of the following links. Thanks a lot 🤍
+
+<a href="https://www.buymeacoffee.com/kevinakasam" target="_blank"><img src="https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png" alt="Buy Me A Coffee" style="height: 41px !important;width: 174px !important;box-shadow: 0px 3px 2px 0px rgba(190, 190, 190, 0.5) !important;-webkit-box-shadow: 0px 3px 2px 0px rgba(190, 190, 190, 0.5) !important;" ></a>
+<a href="https://paypal.me/donationskevinakasam?" target="_blank"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/PayPal.svg/1200px-PayPal.svg.png" alt="Donate via Paypal" style="height: 41px !important;width: 174px !important;box-shadow: 0px 3px 2px 0px rgba(190, 190, 190, 0.5) !important;-webkit-box-shadow: 0px 3px 2px 0px rgba(190, 190, 190, 0.5) !important;" ></a>
+
+<br>
 
 #### Parametric CAD Design
 
