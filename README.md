@@ -254,9 +254,9 @@ gcode:
 [gcode_macro BED_MESH_CALIBRATE]
 rename_existing: _BED_MESH_CALIBRATE
 gcode:
-  PROBE_OUT
-  _BED_MESH_CALIBRATE
-  PROBE_IN
+    PROBE_OUT
+    _BED_MESH_CALIBRATE
+    PROBE_IN
 
 [gcode_macro G29]
 gcode:
