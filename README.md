@@ -150,7 +150,7 @@ horizontal_move_z: 2
 mesh_min: 8,30
 mesh_max: 223,201
 probe_count: 5,5
-relative_reference_index: 12
+zero_reference_position: 117.5, 117.5
 algorithm: bicubic
 fade_start: 1
 fade_end: 10
