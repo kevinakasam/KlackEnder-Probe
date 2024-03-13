@@ -36,6 +36,32 @@ Well, as with my other mods, the focus is on the best cost-benefit ratio. The Kl
 - Easy to install, no soldering, no complicated wiring
 - Works with all pressure surfaces, not affected by heat, no heat soak required
 
+#### Important: Avoiding Printer Damage
+
+Incorrect `z_offset` configuration risks damaging your printer. Here's why:
+
+- Setting `z_offset: 5` means the printer believes the print head is 5mm above the trigger point. If the actual gap is 3mm, commanding Z = 0 drives the nozzle 2mm into the bed.
+- Initial `z_offset` should be 0 or less than the true gap to prevent collisions.
+- Familiarize yourself with the `PROBE_IN` macro. It parks the probe safely but, if `z_offset` is misconfigured, risks crashing the print head into the bed's side. 
+- For safety, disable script parts to ensure the nozzle's safe positioning before full script execution. Do not initiate prints with these modifications.
+
+Example macro adjustment for safety checks:
+
+```gcode
+[gcode_macro PROBE_IN] # Safely returns probe
+gcode:
+    G90             # Absolute positioning
+    G1 Z20          # Raise nozzle
+    G1 X245 F20000  # Move to side
+    G1 Y-8          # Position near bay, ensuring probe is clear
+    G1 Z1           # Lower nozzle slightly above bed to check clearance
+    # Below lines re-enable after verifying above movements are safe
+    # G4 P300       # Pause 300ms
+    # G1 X220 F6000 # Proceed 
+    # G1 Z10        # Adjust nozzle height
+    # G1 X0         # Return to start
+```
+
 If you have any questions feel free to join the [Discord-Server](https://discord.gg/xqpKrxt9FC).
  
 <a href="https://discord.gg/xqpKrxt9FC">
@@ -133,7 +159,7 @@ position_endstop: -8
 
 [probe]
 pin: ^PC14 #Probe-Stop Connection on Skr Mini E3 V1.2
-z_offset: 0 #Measure per your specific setup
+z_offset: 0 #Measure per your specific setup. If in doubt start with 0 and work up. Don't guess a large value. 0 = safe
 x_offset: 4 # negative = left of the nozzle
 y_offset: 21 # negative = in front of of the nozzle
 speed: 5.0
@@ -245,7 +271,7 @@ gcode:
     G1 Z20
     G1 X245 F20000
     G1 Y-8 #Check this against your config of [stepper_y] position_min: ...!
-    G1 Z0
+    G1 Z1
     G4 P300
     G1 X220 F6000
     G1 Z10
