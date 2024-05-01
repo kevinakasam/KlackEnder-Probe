@@ -132,7 +132,7 @@ position_endstop: -8
 # !! Also add in [stepper_y] 'position_min: -8'. Idk why but most configs mave this wrong. For the Stock Ender 3 the homed Y position is -8.
 
 [probe]
-pin: ^PC14 #Probe-Stop Connection on Skr Mini E3 V1.2
+pin: ^YOUR_PIN #Change to where you plug your probe in, endstop or probe pin pulled high (^)
 z_offset: 0 #Measure per your specific setup
 x_offset: 4 # negative = left of the nozzle
 y_offset: 21 # negative = in front of of the nozzle
