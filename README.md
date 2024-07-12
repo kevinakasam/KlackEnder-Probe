@@ -102,7 +102,7 @@ The ```[gcode_macro G29]``` does the same like the ```[gcode_macro AUTO_BED_MESH
 #### Changes to the existing config:
 ```
 [stepper_z]
-endstop_pin: probe:z_virtual_endstop #if you want to use the Prove as z-endstop (You can unsinstall the stock z endstop then. If not, remive the [homing_override])
+endstop_pin: probe:z_virtual_endstop #if you want to use the Prove as z-endstop (You can unsinstall the stock z endstop then. If not, remove the [homing_override])
 #position_endstop: 0 #remove this or uncomment it with a #
 position_min: -8 # set a negative value (minimum as the probe z_offset)
 
