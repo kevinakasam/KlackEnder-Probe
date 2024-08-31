@@ -243,7 +243,7 @@ gcode:
 gcode:
     G90
     G1 Z20
-    G1 X245 F20000
+    G1 X245 F12000
     G1 Y-8 #Check this against your config of [stepper_y] position_min: ...!
     G1 Z0
     G4 P300
@@ -262,7 +262,7 @@ gcode:
 gcode:
     PROBE_OUT
     BED_MESH_CALIBRATE
-    #G1 Y0 F20000
+    #G1 Y0 F12000
     PROBE_IN
 
 [gcode_macro PROBE_CALIBRATE]
@@ -274,7 +274,7 @@ gcode:
     PROBE_OUT
     G90
     G1 Z20
-    G1 X115 Y115 F20000
+    G1 X115 Y115 F12000
     _PROBE_CALIBRATE
     TESTZ Z=20
     M117 Remove the Klack to continue calibration!
@@ -287,7 +287,7 @@ gcode:
     {% endif %}
     PROBE_OUT
     G90
-    G1 Y115 X115 F20000
+    G1 Y115 X115 F12000
     _PROBE_ACCURACY
     PROBE_IN
 
