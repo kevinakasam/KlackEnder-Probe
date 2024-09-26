@@ -98,7 +98,7 @@ The KlackEnder probe works with Marlin and Klipper. This guide only shows you wh
 ### Klipper
 
 The installation for Klipper is pretty easy. Simply do the changes below and copy the code from the ```KlackEnder.cfg```to your ```printer.cfg```
-The ```[gcode_macro G29]``` does the same like the ```[gcode_macro AUTO_BED_MESH]```. I just added this so you can use the G29 command as usual.
+The ```[gcode_macro G29]``` does the same like the ```[gcode_macro BED_MESH_CALIBRATE]```. I just added this so you can use the G29 command as usual.
 #### Changes to the existing config:
 ```
 [stepper_z]
@@ -113,15 +113,15 @@ position_max: 250 #Your printhead have to move all the way to the right to picku
 
 ##Following does not apply for the E3-V2##
 [stepper_y]
-position_min: -8 #most Ender 3 configs have this wrong. Between the nozzle and the bed is a gap of 8mm (Y dimension) when the printer is homed. If not adapt this and the -8 in the Probe_In Makro). 
-position_endstop: -8
+position_min: -8 #most Ender 3 configs have this wrong. Between the nozzle and the bed is a gap of 8mm (Y dimension) when the printer is homed. If not adapt this and the -8 in the Probe_In Makro (-5 for the Ender 3 Pro). 
+position_endstop: -8 # OG Ender 3: -8, Ender 3 Pro: -5
 
 ```
 #### Add new config:
 
 **Don't forgot to edit your probe Pin:**
   ```
-  ##################################
+##################################
 ## Add this to your printer.cfg ##
 ##################################
 #####################################################################
@@ -133,7 +133,7 @@ position_endstop: -8
 
 [probe]
 pin: ^YOUR_PIN #Change to where you plug your probe in, endstop or probe pin pulled high (^)
-z_offset: 0 #Measure per your specific setup
+z_offset: 0 #Measure per your specific setup. Klipper will NOT save this value if this in not located in printer.cfg
 x_offset: 4 # negative = left of the nozzle
 y_offset: 21 # negative = in front of of the nozzle
 speed: 5.0
@@ -146,11 +146,11 @@ samples_tolerance_retries: 6
 ##[(5x5)-1] / 2 = 12
 [bed_mesh]
 speed: 300
-horizontal_move_z: 2
+horizontal_move_z: 5 #Positive value equal to z_offset or larger. eg: if z_offset is -2.5 this must be at least 2.5 or larger
 mesh_min: 8,30
 mesh_max: 223,201
 probe_count: 5,5
-zero_reference_position: 117.5, 117.5
+zero_reference_position: 117.5, 117.5 #for 235x235 bed. adapt to your bed size if needed. same for mesh min and max above
 algorithm: bicubic
 fade_start: 1
 fade_end: 10
@@ -180,52 +180,57 @@ mesh_pps: 4,4
 
 [homing_override]
 set_position_z:0 # Make printer think Z axis is at zero, so we can force a move upwards away from build plate
+axes: z #will only call override if x is involved in the homing call
 gcode:
     G90
     G1 Z10 F3000 ; move up to prevent accidentally scratching build plate    
-    G28 X
-    G28 Y
+    {% if "x" not in (printer.toolhead.homed_axes | lower) %}
+        G28 X
+    {% endif %}
+    {% if "y" not in (printer.toolhead.homed_axes | lower) %}
+        G28 Y        #Will only home XY if they are not currently homed
+    {% endif %}
     PROBE_OUT
-    G1 X117 Y117 F6000
+    G1 X113.5 Y96.5 F6000 ; Adjusted for normal klack offsets with a 235x235 bed X: 117.5 - x_offset, Y: 117.5 - y_offset
     G28 Z
     PROBE_IN
 
-##For Dual Z setups only!! (with independent motors, no Y splitters or dual Z port on board!)##
-[z_tilt]
-z_positions:
-    25,117
-    210,117
-#   A list of X, Y coordinates (one per line; subsequent lines
-#   indented) describing the location of each bed "pivot point". The
-#   "pivot point" is the point where the bed attaches to the given Z
-#   stepper. It is described using nozzle coordinates (the X, Y position
-#   of the nozzle if it could move directly above the point). The
-#   first entry corresponds to stepper_z, the second to stepper_z1,
-#   the third to stepper_z2, etc. This parameter must be provided.
-points:
-    4,96.5
-    219,96.5
-#   A list of X, Y coordinates (one per line; subsequent lines
-#   indented) that should be probed during a Z_TILT_ADJUST command.
-#   Specify coordinates of the nozzle and be sure the probe is above
-#   the bed at the given nozzle coordinates. This parameter must be
-#   provided.
-speed: 100
-#   The speed (in mm/s) of non-probing moves during the calibration.
-#   The default is 50.
-horizontal_move_z: 15
-#   The height (in mm) that the head should be commanded to move to
-#   just prior to starting a probe operation. The default is 5.
-retries: 10
-#   Number of times to retry if the probed points aren't within
-#   tolerance.
-retry_tolerance: 0.01
-#   If retries are enabled then retry if largest and smallest probed
-#   points differ more than retry_tolerance. Note the smallest unit of
-#   change here would be a single step. However if you are probing
-#   more points than steppers then you will likely have a fixed
-#   minimum value for the range of probed points which you can learn
-#   by observing command output.
+##Uncomment for Dual Z setups only!! (with independent motors and drivers, not Y splitters nor dual Z port from one driver on board!)##
+#[z_tilt]
+#z_positions:
+#    25,117
+#    210,117
+	#   A list of X, Y coordinates (one per line; subsequent lines
+	#   indented) describing the location of each bed "pivot point". The
+	#   "pivot point" is the point where the bed attaches to the given Z
+	#   stepper. It is described using nozzle coordinates (the X, Y position
+	#   of the nozzle if it could move directly above the point). The
+	#   first entry corresponds to stepper_z, the second to stepper_z1,
+	#   the third to stepper_z2, etc. This parameter must be provided.
+#points:
+#    4,96.5
+#    219,96.5
+	#   A list of X, Y coordinates (one per line; subsequent lines
+	#   indented) that should be probed during a Z_TILT_ADJUST command.
+	#   Specify coordinates of the nozzle and be sure the probe is above
+	#   the bed at the given nozzle coordinates. This parameter must be
+	#   provided.
+#speed: 100
+	#   The speed (in mm/s) of non-probing moves during the calibration.
+	#   The default is 50.
+#horizontal_move_z: 15
+	#   The height (in mm) that the head should be commanded to move to
+	#   just prior to starting a probe operation. The default is 5.
+#retries: 10
+	#   Number of times to retry if the probed points aren't within
+	#   tolerance.
+#retry_tolerance: 0.01
+	#   If retries are enabled then retry if largest and smallest probed
+	#   points differ more than retry_tolerance. Note the smallest unit of
+	#   change here would be a single step. However if you are probing
+	#   more points than steppers then you will likely have a fixed
+	#   minimum value for the range of probed points which you can learn
+	#   by observing command output.
 
 #####################################################################
 # KlackEnder- Macros
@@ -244,26 +249,23 @@ gcode:
     G90
     G1 Z20
     G1 X245 F12000
-    G1 Y-8 #Check this against your config of [stepper_y] position_min: ...!
+    G1 Y0 ; Check this against your config of [stepper_y] position_min: ...!
     G1 Z0
     G4 P300
     G1 X220 F6000
     G1 Z10
     G1 X0
 
-[gcode_macro BED_MESH_CALIBRATE]
+[gcode_macro BED_MESH_CALIBRATE] #macro with parameter passing
 rename_existing: _BED_MESH_CALIBRATE
 gcode:
     PROBE_OUT
-    _BED_MESH_CALIBRATE
+    _BED_MESH_CALIBRATE {rawparams}
     PROBE_IN
 
-[gcode_macro G29]
+[gcode_macro G29] #reliant on the macro above
 gcode:
-    PROBE_OUT
     BED_MESH_CALIBRATE
-    #G1 Y0 F12000
-    PROBE_IN
 
 [gcode_macro PROBE_CALIBRATE]
 rename_existing: _PROBE_CALIBRATE
@@ -274,7 +276,7 @@ gcode:
     PROBE_OUT
     G90
     G1 Z20
-    G1 X115 Y115 F12000
+    G1 X113.5 Y96.5 F12000 ; Readjust for center of bed adjusted for probe offset
     _PROBE_CALIBRATE
     TESTZ Z=20
     M117 Remove the Klack to continue calibration!
@@ -287,21 +289,23 @@ gcode:
     {% endif %}
     PROBE_OUT
     G90
-    G1 Y115 X115 F12000
+    G1 X113.5 Y96.5 F12000 ; Readjust for center of bed adjusted for probe offset
     _PROBE_ACCURACY
     PROBE_IN
 
-[gcode_macro Z_TILT_ADJUST]
-rename_existing: _Z_TILT_ADJUST
-gcode:
-    PROBE_OUT
-    _Z_TILT_ADJUST
-    PROBE_IN
+#[gcode_macro Z_TILT_ADJUST] #Uncomment this macro if using dual z with z_tilt
+#rename_existing: _Z_TILT_ADJUST
+#gcode:
+#    PROBE_OUT
+#    _Z_TILT_ADJUST
+#    PROBE_IN
 
 
-#####################################################################
-# KlackEnder- Menu - Only if you have a display installed!
-#####################################################################
+#################################################################
+#    KlackEnder- Menu - Only if you have a display installed!   #
+# Will error if you don't have a display configured in klipper. #
+#                       Remove if unneeded                      #
+#################################################################
 
 [menu __main]
 type: list
@@ -329,7 +333,7 @@ type: command
 name: Auto Bed Mesh
 gcode:
     G28
-    AUTO_BED_MESH
+    BED_MESH_CALIBRATE
   ```
 
 ### Marlin
