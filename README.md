@@ -227,10 +227,10 @@ horizontal_move_z: 10
 [gcode_macro SCREWS_TILT_CALCULATE]
 rename_existing: _SCREWS_TILT_CALCULATE
 gcode:
-  G28 ; Should always home before calculation even if already homed
-  probe_out
-  _SCREWS_TILT_CALCULATE
-  probe_in
+    G28 ; Should always home before calculation even if already homed
+    probe_out
+    _SCREWS_TILT_CALCULATE
+    probe_in
 
 ##Uncomment for Dual Z setups only!! (with independent motors and drivers, not Y splitters nor dual Z port from one driver on board!)##
 #[z_tilt]
