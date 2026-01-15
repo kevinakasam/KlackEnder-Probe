@@ -113,13 +113,13 @@ position_max: 250 #Your printhead have to move all the way to the right to picku
 
 ##Following does not apply for the E3-V2##
 [stepper_y]
-position_min: -8 #most Ender 3 configs have this wrong. Between the nozzle and the bed is a gap of 8mm (Y dimension) when the printer is homed. If not adapt this and the -8 in the Probe_In Makro (-5 for the Ender 3 Pro). 
-position_endstop: -8 # OG Ender 3: -8, Ender 3 Pro: -5
+position_min: READ #most Ender 3 configs have this wrong. Between the nozzle and the bed is a gap of 8mm (Y dimension) when the printer is homed. If not adapt this and the -8 in the Probe_In Makro (-5 for the Ender 3 Pro). 
+position_endstop: SAME AS ABOVE
 
 ```
-#### Add new config:
+#### Config information:
 
-**Don't forgot to edit your probe Pin:**
+**Add this DRIECTLY to your `printer.cfg` file:**
   ```
 ##################################
 ## Add this to your printer.cfg ##
@@ -127,7 +127,7 @@ position_endstop: -8 # OG Ender 3: -8, Ender 3 Pro: -5
 #####################################################################
 # KlackEnder- Settings
 #####################################################################
-
+[include KlackEnder.cfg]
 # !! Change your Z endstop pin from 'endstop_pin: Pin123' to 'endstop_pin: probe:z_virtual_endstop'
 # !! Also add in [stepper_y] 'position_min: -8'. Idk why but most configs have this wrong. For the Stock Ender 3 the homed Y position is -8.
 
@@ -142,15 +142,13 @@ sample_retract_dist: 1
 samples: 2
 samples_tolerance_retries: 6
 
-##[(7x7)-1] / 2 = 24
-##[(5x5)-1] / 2 = 12
 [bed_mesh]
 speed: 300
 horizontal_move_z: 5 #Positive value equal to z_offset or larger. eg: if z_offset is -2.5 this must be at least 2.5 or larger
 mesh_min: 8,30
 mesh_max: 223,201
 probe_count: 5,5
-zero_reference_position: 117.5, 117.5 #for 235x235 bed. adapt to your bed size if needed. same for mesh min and max above
+#zero_reference_position: 117.5, 117.5 #for 235x235 bed. adapt to your bed size if needed. same for mesh min and max above
 algorithm: bicubic
 fade_start: 1
 fade_end: 10
@@ -231,7 +229,9 @@ gcode:
     probe_out
     _SCREWS_TILT_CALCULATE
     probe_in
-
+```
+Add this section if building Dual Z. You can quickly comment and uncomment in Klipper by select the whole block and pressing Ctrl+/
+```
 ##Uncomment for Dual Z setups only!! (with independent motors and drivers, not Y splitters nor dual Z port from one driver on board!)##
 #[z_tilt]
 #z_positions:
@@ -268,7 +268,16 @@ gcode:
 	#   more points than steppers then you will likely have a fixed
 	#   minimum value for the range of probed points which you can learn
 	#   by observing command output.
-
+	
+#[gcode_macro Z_TILT_ADJUST] #Uncomment this macro if using dual z with z_tilt
+#rename_existing: _Z_TILT_ADJUST
+#gcode:
+#    PROBE_OUT
+#    _Z_TILT_ADJUST
+#    PROBE_IN
+```
+Below are Macros and Screen menu settings to use with Klack. Add them in a seperate cfg called `KlackEnder.cfg`
+```
 #####################################################################
 # KlackEnder- Macros
 #####################################################################
@@ -330,14 +339,6 @@ gcode:
     _PROBE_ACCURACY
     PROBE_IN
 
-#[gcode_macro Z_TILT_ADJUST] #Uncomment this macro if using dual z with z_tilt
-#rename_existing: _Z_TILT_ADJUST
-#gcode:
-#    PROBE_OUT
-#    _Z_TILT_ADJUST
-#    PROBE_IN
-
-
 #################################################################
 #    KlackEnder- Menu - Only if you have a display installed!   #
 # Will error if you don't have a display configured in klipper. #
@@ -378,7 +379,77 @@ name: Screws Tilt Calculate
 gcode:
     SCREWS_TILT_CALCULATE
   ```
+### Kalico
+If you are running the Kalico fork of Klipper you can use the `dockable_probe` feature in liu of the `probe` section and specific macros. Add to your `printer.cfg`.
 
+```
+[dockable_probe]
+pin: ^YOUR_PIN #Change to where you plug your probe in, endstop or probe pin pulled high (^)
+#z_offset: 0 #Measure per your specific setup
+x_offset: 4 # negative = left of the nozzle
+y_offset: 21 # negative = in front of of the nozzle
+speed: 5.0
+lift_speed: 10.0
+sample_retract_dist: 2
+samples: 3
+samples_tolerance: 0.00625
+samples_tolerance_retries: 6
+#activate_gcode:
+#deactivate_gcode:
+drop_first_result: False #Make True if you have first probe inconsistancies
+
+# Important Bits: These values may vary from printer to printer#
+dock_position: 245,10 #Where the Klack is docked. ~X245 for v-wheel mount. ~X249 for Frank linear rail. Y value for clearance.
+approach_position: 245,15 #same as dock_position for Euclid style probes
+detach_position: 230,10,2 #Lower gantry to small Z pos to detach the probe
+extract_position: 230,10 #Move that take the probe out of the dock
+insert_position: 245,10 #same as dock_position for Euclid style probes
+
+#safe_dock_distance :
+#safe_position : approach_position
+z_hop: 15.0 #This forces the toolhead up if not homed or moves the toolhead up to this value if already homed
+restore_toolhead: True
+#dock_retries:
+auto_attach_detach: True
+attach_speed:70
+detach_speed:100
+travel_speed:150
+check_open_attach: True
+
+[bed_mesh]
+speed: 300
+horizontal_move_z: 5 #Positive value equal to z_offset or larger. eg: if z_offset is -2.5 this must be at least 2.5 or larger
+mesh_min: 8,30
+mesh_max: 223,201
+probe_count: 5,5
+#zero_reference_position: 117.5, 117.5 #for 235x235 bed. adapt to your bed size if needed. same for mesh min and max above
+algorithm: bicubic
+fade_start: 1
+fade_end: 10
+#fade_target:
+#   The z position in which fade should converge. When this value is set
+#   to a non-zero value it must be within the range of z-values in the mesh.
+#   Users that wish to converge to the z homing position should set this to 0.
+#   Default is the average z value of the mesh.
+split_delta_z: 0.015
+#   The amount of Z difference (in mm) along a move that will
+#   trigger a split. Default is .025.
+move_check_distance: 3
+#   The distance (in mm) along a move to check for split_delta_z.
+#   This is also the minimum length that a move can be split. Default
+#   is 5.0.
+mesh_pps: 4,4
+#   A comma separated pair of integers (X,Y) defining the number of
+#   points per segment to interpolate in the mesh along each axis. A
+#   "segment" can be defined as the space between each probed
+#   point. The user may enter a single value which will be applied
+#   to both axes.  Default is 2,2.
+#bicubic_tension: .2
+#   When using the bicubic algorithm the tension parameter above
+#   may be applied to change the amount of slope interpolated.
+#   Larger numbers will increase the amount of slope, which
+#   results in more curvature in the mesh. Default is .2.
+```
 ### Marlin
 The installation for Marlin requires some more changes, but I will guide you through this :). These changes are only to get the KlackEnder working correctly. You still need to configure the rest of the options as appropriate for your printer. Support for the KlackEnder and similar probes was only recently added so a current version of Marlin needs to be used. Go to ```https://marlinfw.org/meta/download/``` and download the ```bugfix-2.1.x```. Follow the instructions for downloading, Installing, and configuring VSCode. Before compiling with PlatformIO you will need to setup your config files. Go to ```https://github.com/MarlinFirmware/Configurations/tree/bugfix-2.1.x/config/examples/Creality``` find your Printer/board setup and down load the appropriate Configuration.h & Configuration_adv.h. At this point you will want to go through and make the changes below, once completed you should be good to compile and use your printer. We are working on getting Configuration files posted for common printer combinations as well as .bins uploaded with pre-compiled firmware for common setups.
 
